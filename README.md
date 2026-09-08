@@ -1,159 +1,174 @@
-🤖 AI Browser Automation Agent
+# AI Browser Automation Agent
 
-An AI-powered browser automation agent that converts natural-language tasks into autonomous browser workflows. The agent observes the current webpage, uses an LLM to determine the next action, executes the action with Playwright, optionally performs visual reasoning using screenshots, and verifies whether the task was successfully completed.
+An AI-powered browser automation agent that converts natural-language tasks into autonomous browser workflows. The system uses an LLM to plan browser actions, Playwright to interact with webpages, optional vision-based reasoning for screenshots, and verification to confirm task completion.
 
-🚀 Overview
+## Overview
 
-Traditional browser automation usually depends on predefined scripts and fixed sequences of actions. This project takes a more adaptive approach.
+Traditional browser automation relies on predefined scripts and fixed sequences of actions. This project uses an agent-based approach where the browser workflow is dynamically determined based on the current webpage state.
 
-The user provides a goal in natural language, such as:
+For example, a user can provide a task such as:
 
-"Open Wikipedia and search for Artificial Intelligence."
+> Open Wikipedia and search for Artificial Intelligence.
 
-The agent then autonomously:
+The agent analyzes the webpage, determines the appropriate action, executes it through Playwright, observes the updated page, and continues until the task is completed or the maximum number of steps is reached.
 
-Opens or navigates to the required webpage.
-Inspects the current page and visible elements.
-Sends the page state and task to an LLM planner.
-Selects the next browser action.
-Executes the action using Playwright.
-Optionally analyzes screenshots using a vision-capable model.
-Recovers from failed actions by re-planning.
-Verifies the final result before reporting success.
-✨ Key Features
-🗣️ Natural-language browser task execution
-🌐 Autonomous browser control using Playwright
-🧠 LLM-based action planning
-🔍 DOM-based webpage observation
-👁️ Optional screenshot-based visual reasoning
-🔄 Self-correction and re-planning after failures
-🛡️ Domain allowlist for safer execution
-📊 Run metrics and performance tracking
-📝 Step-by-step execution logs
-🖥️ Simple web interface for submitting tasks
-⚡ FastAPI backend with interactive API documentation
+The system can also use screenshots for additional visual reasoning and can re-plan when an action fails.
 
-🏗️ Architecture
-                    ┌──────────────────┐
-                    │    User Task     │
-                    │ Natural Language │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │    FastAPI API   │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │   LLM Planner    │
-                    │  Action Decision │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │ Browser Observer │
-                    │  DOM + Page Data │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │     Playwright   │
-                    │ Browser Actions  │
-                    └────────┬─────────┘
-                             │
-                  ┌──────────┴──────────┐
-                  ▼                     ▼
-          ┌──────────────┐      ┌──────────────┐
-          │  Screenshot  │      │   Execution  │
-          │ Vision Model │      │     Logs     │
-          └──────┬───────┘      └──────────────┘
-                 │
-                 ▼
-          ┌──────────────┐
-          │ Verification │
-          └──────┬───────┘
-                 │
-                 ▼
-          ┌──────────────┐
-          │ Final Result │
-          └──────────────┘
+## Features
 
-Main Components
+* Natural-language browser task execution
+* LLM-based browser action planning
+* Autonomous browser control using Playwright
+* DOM-based webpage observation
+* Optional screenshot-based visual reasoning
+* Automatic re-planning after failed actions
+* Task completion verification
+* Domain allowlist for safer execution
+* Step-by-step execution logging
+* Run performance metrics
+* FastAPI backend
+* Web interface for submitting browser tasks
+* Interactive API documentation
 
-File	Description
-agent.py	Core autonomous browser-agent logic
-config.py	Environment variables, model configuration and safety settings
-llm.py	LLM planning, vision and verification requests
-server.py	FastAPI application and API endpoints
-evaluator.py	Run statistics and metrics aggregation
-static/index.html	Browser-based user interface
-requirements.txt	Python dependencies
-logs/	Execution logs for completed and failed tasks
-screenshots/	Screenshots captured during browser execution
+## System Architecture
 
-
-Technologies Used
-Python
-FastAPI
+```text
+User Task
+    |
+    v
+FastAPI Server
+    |
+    v
+LLM Planner
+    |
+    v
+Browser Observation
+(DOM + Page State)
+    |
+    v
 Playwright
-OpenRouter
-Large Language Models (LLMs)
-Vision-capable AI models
-HTML / JavaScript
-JSON
-Uvicorn
+    |
+    +-------------------+
+    |                   |
+    v                   v
+Browser Action     Screenshot
+                        |
+                        v
+                  Vision Model
+    |                   |
+    +---------+---------+
+              |
+              v
+        Result Verification
+              |
+              v
+        Final Task Result
+```
 
+## Project Structure
 
-Installation
-1. Clone the repository
-git clone git@github.com:Sudhikshaa16/AI-Browser-Automation-Agent.git
-cd AI-Browser-Automation-Agent
-2. Create a virtual environment
-Windows PowerShell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-Windows CMD
-python -m venv venv
-venv\Scripts\activate
-3. Install dependencies
-pip install -r requirements.txt
-4. Install Playwright Chromium
-python -m playwright install chromium
+```text
+AI-Browser-Automation-Agent/
+│
+├── agent.py
+├── config.py
+├── evaluator.py
+├── llm.py
+├── server.py
+├── requirements.txt
+├── README.md
+│
+├── static/
+│   └── index.html
+│
+├── logs/
+│   └── execution_logs.json
+│
+└── screenshots/
+    └── browser_screenshots.png
+```
 
+## Components
 
-Running the Application
+### agent.py
 
-Start the FastAPI server:
+Contains the core browser-agent loop. It manages browser sessions, observes webpages, selects actions, executes actions, records execution history, and handles task completion.
 
-python -m uvicorn server:app --reload
+### config.py
 
-The application will be available at:
+Contains application configuration such as:
 
-http://127.0.0.1:8000/
+* LLM model settings
+* Maximum execution steps
+* Browser mode
+* Allowed domains
+* Environment variables
 
-FastAPI interactive documentation:
+### llm.py
 
-http://127.0.0.1:8000/docs
+Handles communication with the LLM through OpenRouter. It is responsible for:
 
+* Action planning
+* Vision-based reasoning
+* Task verification
 
-How the Agent Works
-1. Observation
+### server.py
 
-The agent examines the current webpage and collects information about visible elements such as:
+Contains the FastAPI application and API endpoints used to communicate with the browser agent.
 
-Links
-Buttons
-Input fields
-Text
-Page URL
-Other relevant DOM elements
-2. Planning
+### evaluator.py
 
-The LLM receives the user's goal, current webpage information and previous execution history.
+Processes execution logs and generates performance statistics such as completion rate, average steps, and action failure rate.
 
-It selects an appropriate action such as:
+### static/index.html
 
+Provides the web interface through which users can submit browser automation tasks and view results.
+
+## Technologies
+
+* Python
+* FastAPI
+* Playwright
+* OpenRouter
+* Large Language Models
+* Vision-capable AI models
+* HTML
+* JavaScript
+* JSON
+* Uvicorn
+
+## How It Works
+
+### 1. Task Input
+
+The user provides a task in natural language.
+
+Example:
+
+```text
+Open Wikipedia and search for Artificial Intelligence
+```
+
+### 2. Page Observation
+
+The agent examines the current browser page and extracts relevant information such as:
+
+* Page URL
+* Visible text
+* Links
+* Buttons
+* Input fields
+* Other relevant DOM elements
+
+### 3. LLM Planning
+
+The task and current browser state are sent to the LLM.
+
+The model selects the next action required to achieve the goal.
+
+Supported actions include:
+
+```text
 open(url)
 click(selector)
 type(selector, text)
@@ -163,27 +178,245 @@ wait(seconds)
 extract(selector)
 verify
 done(message)
-3. Execution
+```
 
-The selected action is executed through Playwright.
+### 4. Browser Execution
 
-For example:
+The selected action is executed using Playwright.
 
-LLM → click search box
-      ↓
-Playwright → locate search box
-      ↓
-Playwright → click
-      ↓
-LLM → type "Artificial Intelligence"
-4. Vision Reasoning
+Example:
 
-When enabled, the agent captures a screenshot of the current webpage.
+```text
+LLM
+ |
+ | click search box
+ v
+Playwright
+ |
+ | locate element
+ v
+Browser
+ |
+ | click
+ v
+Updated Page
+```
 
-The screenshot can be analyzed by a vision-capable model to provide additional context when DOM information alone is insufficient.
+The updated webpage is then observed again so that the agent can determine the next action.
 
-5. Verification
+### 5. Vision Reasoning
 
-The agent does not simply assume that the task succeeded.
+When enabled, the agent captures a screenshot of the webpage and sends it to a vision-capable model.
 
-Before returning success, the system evaluates the current webpage and checks whether the requested goal has actually been achieved.
+This provides additional visual context when DOM information alone may not be sufficient.
+
+### 6. Error Recovery
+
+If an action fails, the agent can observe the updated browser state and ask the LLM to generate a new action instead of immediately terminating the task.
+
+### 7. Verification
+
+After completing the required actions, the system verifies the current page state to determine whether the original task was actually completed.
+
+Only after successful verification is the task reported as completed.
+
+## API
+
+### Health Check
+
+```http
+GET /health
+```
+
+Example response:
+
+```json
+{
+  "status": "healthy"
+}
+```
+
+### Metrics
+
+```http
+GET /metrics
+```
+
+Returns execution statistics including:
+
+* Total number of runs
+* Completion rate
+* Average number of steps
+* Action failure rate
+
+### Submit Task
+
+```http
+POST /command
+```
+
+Example request:
+
+```json
+{
+  "query": "Open Wikipedia and search for Artificial Intelligence",
+  "headless": false,
+  "max_steps": 10,
+  "use_vision": true
+}
+```
+
+Example response:
+
+```json
+{
+  "status": "success",
+  "message": "Task completed successfully",
+  "session_id": "20260908_123456_123456",
+  "steps": [],
+  "final_url": "https://www.wikipedia.org/"
+}
+```
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone git@github.com:Sudhikshaa16/AI-Browser-Automation-Agent.git
+cd AI-Browser-Automation-Agent
+```
+
+### 2. Create a virtual environment
+
+Windows PowerShell:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+Windows CMD:
+
+```cmd
+python -m venv venv
+venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Install Playwright Chromium
+
+```bash
+python -m playwright install chromium
+```
+
+## Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+OPENROUTER_API_KEY=your_api_key_here
+OPENROUTER_MODEL=minimax/minimax-m3:free
+OPENROUTER_VISION_MODEL=minimax/minimax-m3:free
+MAX_STEPS=15
+HEADLESS=false
+ALLOWED_DOMAINS=youtube.com,wikipedia.org,google.com,amazon.com
+```
+
+Do not commit the `.env` file to GitHub.
+
+Add the following to `.gitignore`:
+
+```text
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+```
+
+## Running the Application
+
+Start the FastAPI server:
+
+```bash
+python -m uvicorn server:app --reload
+```
+
+Open the application:
+
+```text
+http://127.0.0.1:8000/
+```
+
+FastAPI documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+## Safety
+
+The application uses a domain allowlist to restrict browser automation to approved websites.
+
+Example:
+
+```env
+ALLOWED_DOMAINS=youtube.com,wikipedia.org,google.com,amazon.com
+```
+
+The agent should only be used in controlled and authorized environments.
+
+It should not be used for:
+
+* Financial transactions
+* Password changes
+* Account deletion
+* Sensitive administrative actions
+* Irreversible operations
+* Unauthorized automation
+
+## Logging and Evaluation
+
+Each browser-agent execution can be recorded in the `logs/` directory.
+
+Screenshots captured during execution are stored in the `screenshots/` directory.
+
+These records can be used to:
+
+* Debug failed tasks
+* Analyze agent decisions
+* Evaluate task completion
+* Measure browser-agent performance
+* Compare different planning strategies
+
+## Performance Metrics
+
+The system provides metrics including:
+
+| Metric              | Description                                |
+| ------------------- | ------------------------------------------ |
+| Run Count           | Total number of agent executions           |
+| Completion Rate     | Percentage of successfully completed tasks |
+| Average Steps       | Average number of actions per task         |
+| Action Failure Rate | Percentage of failed browser actions       |
+
+## Use Cases
+
+This project demonstrates practical applications of Agentic AI and browser automation, including:
+
+* Autonomous web navigation
+* LLM-based task planning
+* Intelligent web interaction
+* Vision-assisted browser automation
+* Self-correcting AI agents
+* Goal-driven browser workflows
+* Automated information retrieval
+
+
